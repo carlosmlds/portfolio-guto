@@ -8,7 +8,6 @@ import { categories, projects as initialProjects, type Project } from '@/lib/por
 import { parseVideoLink, type VideoEmbed } from '@/lib/video-embed';
 import { PortfolioShell } from '@/components/portfolio-shell';
 import { fetchProjectsFromNotion } from '@/lib/notion';
-import capaDestaque from '@/assets/capa-destaque.jpg';
 import 'plyr-react/plyr.css';
 
 // Carrega o Plyr dinamicamente apenas no navegador para evitar o erro "document is not defined" no servidor
@@ -83,15 +82,15 @@ function Index() {
         console.log("Projetos vindos do Notion:", notionProjects);
 
         if (notionProjects && notionProjects.length > 0) {
-  setProjectList((prevList) => {
-    const filteredPrev = prevList.filter(
-      (localProj) => !notionProjects.some((np) => np.title === localProj.title)
-    );
-    return [...notionProjects, ...filteredPrev];
-  });
-} else {
-  console.warn("O Notion conectou, mas retornou 0 projetos.");
-}
+          setProjectList((prevList) => {
+            const filteredPrev = prevList.filter(
+              (localProj) => !notionProjects.some((np) => np.title === localProj.title)
+            );
+            return [...notionProjects, ...filteredPrev];
+          });
+        } else {
+          console.warn("O Notion conectou, mas retornou 0 projetos.");
+        }
       } catch (err) {
         console.error("Erro ao buscar dados do Notion:", err);
       }
@@ -105,10 +104,7 @@ function Index() {
   const filtered = projectList.filter(p => category === 'Todos' || p.category === category);
   const selectedEmbed = selected ? parseVideoLink(selected.video) : null;
 
-  // O primeiro projeto da lista (ou o marcado como Destaque)
-// Mantém sempre o projeto original de ID/Título específico como destaque do topo
-// Busca qual projeto está marcado com a caixinha "Destaque" no Notion
-// 1. Pega TODOS os projetos que estão com a caixinha marcada no Notion
+  // 1. Pega TODOS os projetos que estão com a caixinha marcada no Notion
   const featuredList = projectList.filter(p => p.destaque);
   
   // 2. Se não tiver nenhum marcado, usa o primeiro da lista como segurança
@@ -180,73 +176,74 @@ function Index() {
               </div>
             )}
           </div>
-          <div key={featuredIndex} className="animate-in fade-in zoom-in-[0.98] slide-in-from-right-4 duration-500 ease-out space-y-4"></div>
 
-          {/* Player do Vídeo / Capa */}
-          <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black relative"></div>
-          <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black relative">
-            {!isPlaying && hdThumbnail ? (
-              <button 
-                onClick={() => setIsPlaying(true)}
-                className="group absolute inset-0 w-full h-full flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all z-10 cursor-pointer"
-                aria-label="Reproduzir vídeo em destaque"
-              >
-                <img 
-                  src={hdThumbnail} 
-                  alt="Capa do trabalho em destaque" 
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
-                  <Play className="w-7 h-7 md:w-9 md:h-9 fill-current ml-1" />
-                </div>
-              </button>
-            ) : (
-              isMounted && youtubeId ? (
-                <Suspense fallback={<div className="w-full h-full bg-black flex items-center justify-center text-xs text-muted-foreground">Carregando player...</div>}>
-                  <Plyr
-                    source={{
-                      type: 'video',
-                      sources: [
-                        {
-                          src: youtubeId,
-                          provider: 'youtube',
-                        },
-                      ],
-                    }}
-                    options={{
-                      autoplay: true,
-                      controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
-                      youtube: {
-                        noCookie: true,
-                        rel: 0,
-                        showinfo: 0,
-                        iv_load_policy: 3,
-                        modestbranding: 1,
-                      },
-                    }}
+          {/* DIV DA ANIMAÇÃO - AGORA ELA ABRAÇA O CONTEÚDO CORRETAMENTE */}
+          <div key={featuredIndex} className="animate-in fade-in zoom-in-[0.98] slide-in-from-right-4 duration-500 ease-out space-y-4">
+            
+            {/* Player do Vídeo / Capa */}
+            <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black relative">
+              {!isPlaying && hdThumbnail ? (
+                <button 
+                  onClick={() => setIsPlaying(true)}
+                  className="group absolute inset-0 w-full h-full flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all z-10 cursor-pointer"
+                  aria-label="Reproduzir vídeo em destaque"
+                >
+                  <img 
+                    src={hdThumbnail} 
+                    alt="Capa do trabalho em destaque" 
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
-                </Suspense>
+                  <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                    <Play className="w-7 h-7 md:w-9 md:h-9 fill-current ml-1" />
+                  </div>
+                </button>
               ) : (
-                featuredEmbed && <EmbedFrame embed={featuredEmbed} title="Trabalho em Destaque" />
-              )
-            )}
-          </div>
+                isMounted && youtubeId ? (
+                  <Suspense fallback={<div className="w-full h-full bg-black flex items-center justify-center text-xs text-muted-foreground">Carregando player...</div>}>
+                    <Plyr
+                      source={{
+                        type: 'video',
+                        sources: [
+                          {
+                            src: youtubeId,
+                            provider: 'youtube',
+                          },
+                        ],
+                      }}
+                      options={{
+                        autoplay: true,
+                        controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+                        youtube: {
+                          noCookie: true,
+                          rel: 0,
+                          showinfo: 0,
+                          iv_load_policy: 3,
+                          modestbranding: 1,
+                        },
+                      }}
+                    />
+                  </Suspense>
+                ) : (
+                  featuredEmbed && <EmbedFrame embed={featuredEmbed} title="Trabalho em Destaque" />
+                )
+              )}
+            </div>
 
-          {/* TÍTULO, CATEGORIA E DESCRIÇÃO */}
-          <div className="pt-3 flex flex-col gap-2 border-t border-white/10"></div>
-          <div className="pt-3 flex flex-col gap-2 border-t border-white/10">
-            <div className="space-y-1">
-              <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-                {featuredTitle}
-              </h3>
-              <p className="text-xs md:text-sm text-primary font-medium tracking-wide">
-                {featuredCategoryRole}
+            {/* TÍTULO, CATEGORIA E DESCRIÇÃO */}
+            <div className="pt-3 flex flex-col gap-2 border-t border-white/10">
+              <div className="space-y-1">
+                <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                  {featuredTitle}
+                </h3>
+                <p className="text-xs md:text-sm text-primary font-medium tracking-wide">
+                  {featuredCategoryRole}
+                </p>
+              </div>
+              
+              <p className="text-xs md:text-sm text-muted-foreground max-w-3xl leading-relaxed">
+                {featuredDescription}
               </p>
             </div>
-            
-            <p className="text-xs md:text-sm text-muted-foreground max-w-3xl leading-relaxed">
-              {featuredDescription}
-            </p>
           </div>
         </div>
       </section>
