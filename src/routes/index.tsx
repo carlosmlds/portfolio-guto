@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { ArrowUpRight, Instagram, Play } from 'lucide-react';
+import { ArrowUpRight, Instagram, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { InstagramEmbed } from '@/components/instagram-embed';
@@ -68,6 +68,7 @@ function Index() {
   const [selected, setSelected] = useState<Project | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
 
   // Garante a renderização segura de componentes do cliente no navegador
   useEffect(() => {
@@ -107,7 +108,14 @@ function Index() {
   // O primeiro projeto da lista (ou o marcado como Destaque)
 // Mantém sempre o projeto original de ID/Título específico como destaque do topo
 // Busca qual projeto está marcado com a caixinha "Destaque" no Notion
-const featuredProject = projectList.find(p => p.destaque) || projectList[0];
+// 1. Pega TODOS os projetos que estão com a caixinha marcada no Notion
+  const featuredList = projectList.filter(p => p.destaque);
+  
+  // 2. Se não tiver nenhum marcado, usa o primeiro da lista como segurança
+  const safeFeaturedList = featuredList.length > 0 ? featuredList : [projectList[0]].filter(Boolean);
+  
+  // 3. Define qual projeto vai aparecer na tela baseado no número do carrossel (featuredIndex)
+  const featuredProject = safeFeaturedList[featuredIndex];
 
   const featuredTitle = featuredProject?.title ?? "Título do Trabalho";
   const featuredCategoryRole = featuredProject ? `${featuredProject.category} / ${featuredProject.role}` : "";
@@ -138,11 +146,39 @@ const featuredProject = projectList.find(p => p.destaque) || projectList[0];
 
         {/* --- BLOCO DO VÍDEO EM DESTAQUE --- */}
         <div className="w-full space-y-4 mt-2">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="eyebrow text-xs uppercase tracking-widest text-primary font-semibold">
-              Destaque
-            </span>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="eyebrow text-xs uppercase tracking-widest text-primary font-semibold">
+                Destaque {safeFeaturedList.length > 1 ? `(${featuredIndex + 1}/${safeFeaturedList.length})` : ''}
+              </span>
+            </div>
+
+            {/* Só mostra as setinhas se houver mais de 1 destaque marcado no Notion */}
+            {safeFeaturedList.length > 1 && (
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => {
+                    setFeaturedIndex(prev => prev === 0 ? safeFeaturedList.length - 1 : prev - 1);
+                    setIsPlaying(false);
+                  }} 
+                  className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-all cursor-pointer"
+                  aria-label="Destaque anterior"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => {
+                    setFeaturedIndex(prev => (prev + 1) % safeFeaturedList.length);
+                    setIsPlaying(false);
+                  }} 
+                  className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-white transition-all cursor-pointer"
+                  aria-label="Próximo destaque"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Player do Vídeo / Capa */}
