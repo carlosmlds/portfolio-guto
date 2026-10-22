@@ -1,0 +1,12 @@
+# Portfólio Guto
+- [x] Trocar os destaques pela cor favorita do usuário, #ff6700.
+- [x] Criar identidade visual e página de trabalhos com filtros e prévias.
+- [x] Criar páginas sobre e contato sem inventar dados pessoais.
+- [x] Verificar navegação e visualização em telas grandes e pequenas.
+- [x] Deixar o site pronto para tocar os vídeos a partir de links do YouTube ou Vimeo.
+- [x] Incluir os nove trabalhos enviados pelo Guto.
+- [x] Remover projetos, destaque e arquivos de demonstração, mantendo apenas trabalhos reais.
+- [x] Link novo da campanha 40 anos da Korpus, com a capa do Instagram.
+- [x] Entraram: Lucas 5 anos, nascimento de Antonella, motion evento Korpus, motion doação de sangue, pré-wedding Ceci & Vitor.
+- [ ] Definir o destino real do contato para o briefing ser enviado de fato.
+- [ ] Incluir as publicações da Korpus com capas e descrições individuais, sem duplicar a campanha de 40 anos.
