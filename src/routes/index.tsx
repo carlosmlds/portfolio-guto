@@ -180,8 +180,10 @@ function Index() {
               </div>
             )}
           </div>
+          <div key={featuredIndex} className="animate-in fade-in zoom-in-[0.98] slide-in-from-right-4 duration-500 ease-out space-y-4"></div>
 
           {/* Player do Vídeo / Capa */}
+          <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black relative"></div>
           <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black relative">
             {!isPlaying && hdThumbnail ? (
               <button 
@@ -231,6 +233,7 @@ function Index() {
           </div>
 
           {/* TÍTULO, CATEGORIA E DESCRIÇÃO */}
+          <div className="pt-3 flex flex-col gap-2 border-t border-white/10"></div>
           <div className="pt-3 flex flex-col gap-2 border-t border-white/10">
             <div className="space-y-1">
               <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
