@@ -292,14 +292,36 @@ function Index() {
         <DialogContent className="preview-dialog">
           <DialogTitle>{selected?.title}</DialogTitle>
           <DialogDescription>{selected?.category} · {selected?.role}</DialogDescription>
-          {selectedEmbed ? (
+          
+          {/* LÓGICA NOVA: Se for YouTube/Vimeo exibe o player, se for Insta (ou sem vídeo) exibe a FOTO GIGANTE */}
+          {selectedEmbed && selectedEmbed.provider !== 'instagram' ? (
             <EmbedFrame embed={selectedEmbed} title={selected?.title ?? 'Publicação do projeto'} />
           ) : selected?.image ? (
-            <img src={selected.image} alt={selected.title} />
+            <div className="w-full flex items-center justify-center rounded-md overflow-hidden bg-black/40">
+              <img 
+                src={selected.image} 
+                alt={selected.title} 
+                className="w-full max-h-[65vh] object-contain"
+              />
+            </div>
           ) : (
             <p className="text-sm text-muted-foreground">Prévia indisponível.</p>
           )}
-          <p className="text-sm text-muted-foreground">{selected?.description}</p>
+          
+          <p className="text-sm text-muted-foreground mt-2">{selected?.description}</p>
+          
+          {/* O LINK LARANJA PARA O INSTAGRAM APARECE AQUI */}
+          {selectedEmbed && selectedEmbed.provider === 'instagram' && (
+            <a 
+              href={selected?.video} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[10px] md:text-xs font-bold text-primary uppercase tracking-widest hover:brightness-125 transition-all mt-1 w-fit border-b border-primary/30 pb-0.5"
+            >
+              Abrir publicação no Instagram
+            </a>
+          )}
+
           {selectedEmbed && selectedEmbed.provider !== 'instagram' && (
             <p className="text-xs text-muted-foreground">Vídeo hospedado no {providerLabel[selectedEmbed.provider]}.</p>
           )}
