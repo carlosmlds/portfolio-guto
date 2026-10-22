@@ -117,7 +117,7 @@ const featuredProject = projectList.find(p => p.destaque) || projectList[0];
   const featuredEmbed = videoToDisplay ? parseVideoLink(videoToDisplay) : null;
   const youtubeId = getYouTubeId(videoToDisplay);
 
-  const hdThumbnail = capaDestaque || getYouTubeHdThumbnail(videoToDisplay) || featuredProject?.image;
+  const hdThumbnail = featuredProject?.image || getYouTubeHdThumbnail(videoToDisplay);
 
   return (
     <PortfolioShell>
