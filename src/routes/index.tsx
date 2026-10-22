@@ -106,7 +106,8 @@ function Index() {
 
   // O primeiro projeto da lista (ou o marcado como Destaque)
 // Mantém sempre o projeto original de ID/Título específico como destaque do topo
-const featuredProject = projectList.find(p => p.title === "Bruna & Naldo — Pré-wedding") || projectList[0];
+// Busca qual projeto está marcado com a caixinha "Destaque" no Notion
+const featuredProject = projectList.find(p => p.destaque) || projectList[0];
 
   const featuredTitle = featuredProject?.title ?? "Título do Trabalho";
   const featuredCategoryRole = featuredProject ? `${featuredProject.category} / ${featuredProject.role}` : "";

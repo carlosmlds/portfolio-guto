@@ -19,6 +19,7 @@ export type Project = {
   description: string;
   /** Link do YouTube, Vimeo ou Instagram do trabalho. */
   video?: string;
+  destaque?: boolean;
 };
 
 export const projects: Project[] = [

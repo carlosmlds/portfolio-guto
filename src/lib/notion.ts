@@ -6,6 +6,7 @@ export interface Project {
   description: string;
   video: string;
   image: string;
+  destaque: boolean; // Novo campo para o destaque
 }
 
 const rawDatabaseId = import.meta.env['VITE_NOTION_DATABASE_ID'];
@@ -43,45 +44,47 @@ export async function fetchProjectsFromNotion(): Promise<Project[]> {
     const data = await response.json();
     console.log('Projetos retornados do Notion:', data.results);
 
-return data.results.map((page: any) => {
-  const props = page.properties;
+    return data.results.map((page: any) => {
+      const props = page.properties;
 
-  // Pega o título buscando por 'Título', 'Title' ou 'Name'
-  const title = props.Título?.title?.[0]?.plain_text 
-    ?? props.Title?.title?.[0]?.plain_text 
-    ?? props.Name?.title?.[0]?.plain_text 
-    ?? 'Sem título';
+      const title = props.Título?.title?.[0]?.plain_text 
+        ?? props.Title?.title?.[0]?.plain_text 
+        ?? props.Name?.title?.[0]?.plain_text 
+        ?? 'Sem título';
 
-  const category = props.Categoria?.select?.name ?? props.Category?.select?.name ?? 'Design';
-  const role = props.Função?.rich_text?.[0]?.plain_text ?? props.Role?.rich_text?.[0]?.plain_text ?? 'Design';
-  const description = props.Descrição?.rich_text?.[0]?.plain_text ?? props.Description?.rich_text?.[0]?.plain_text ?? '';
-  const video = props.Vídeo?.url ?? props.Video?.url ?? props.Link?.url ?? '';
+      const category = props.Categoria?.select?.name ?? props.Category?.select?.name ?? 'Design';
+      const role = props.Função?.rich_text?.[0]?.plain_text ?? props.Role?.rich_text?.[0]?.plain_text ?? 'Design';
+      const description = props.Descrição?.rich_text?.[0]?.plain_text ?? props.Description?.rich_text?.[0]?.plain_text ?? '';
+      const video = props.Vídeo?.url ?? props.Video?.url ?? props.Link?.url ?? '';
 
-  // Procura a imagem em várias colunas possíveis ('Capa', 'Imagem', 'Cover', 'Image')
-  const capaProp = props.Capa ?? props.Imagem ?? props.Cover ?? props.Image;
-  let image = '';
+      // Pega a caixinha de Destaque (checkbox) do Notion
+      const destaque = props.Destaque?.checkbox ?? props.Featured?.checkbox ?? false;
 
-  if (capaProp) {
-    if (capaProp.type === 'url') {
-      image = capaProp.url ?? '';
-    } else if (capaProp.type === 'files' && capaProp.files?.length > 0) {
-      const fileObj = capaProp.files[0];
-      image = fileObj.file?.url ?? fileObj.external?.url ?? '';
-    } else if (capaProp.type === 'rich_text' && capaProp.rich_text?.[0]?.plain_text) {
-      image = capaProp.rich_text[0].plain_text;
-    }
-  }
+      const capaProp = props.Capa ?? props.Imagem ?? props.Cover ?? props.Image;
+      let image = '';
 
-  return {
-    id: page.id,
-    title,
-    category,
-    role,
-    description,
-    video,
-    image,
-  };
-});
+      if (capaProp) {
+        if (capaProp.type === 'url') {
+          image = capaProp.url ?? '';
+        } else if (capaProp.type === 'files' && capaProp.files?.length > 0) {
+          const fileObj = capaProp.files[0];
+          image = fileObj.file?.url ?? fileObj.external?.url ?? '';
+        } else if (capaProp.type === 'rich_text' && capaProp.rich_text?.[0]?.plain_text) {
+          image = capaProp.rich_text[0].plain_text;
+        }
+      }
+
+      return {
+        id: page.id,
+        title,
+        category,
+        role,
+        description,
+        video,
+        image,
+        destaque, // Retorna true ou false
+      };
+    });
   } catch (error) {
     console.error('Erro ao buscar projetos do Notion:', error);
     return [];
