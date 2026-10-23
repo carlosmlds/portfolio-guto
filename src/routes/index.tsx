@@ -293,8 +293,7 @@ function Index() {
           <DialogTitle>{selected?.title}</DialogTitle>
           <DialogDescription>{selected?.category} · {selected?.role}</DialogDescription>
           
-          {/* LÓGICA NOVA: Se for YouTube/Vimeo exibe o player, se for Insta (ou sem vídeo) exibe a FOTO GIGANTE */}
-          {selectedEmbed && selectedEmbed.provider !== 'instagram' ? (
+          {selectedEmbed ? (
             <EmbedFrame embed={selectedEmbed} title={selected?.title ?? 'Publicação do projeto'} />
           ) : selected?.image ? (
             <div className="w-full flex items-center justify-center rounded-md overflow-hidden bg-black/40">
@@ -310,18 +309,6 @@ function Index() {
           
           <p className="text-sm text-muted-foreground mt-2">{selected?.description}</p>
           
-          {/* O LINK LARANJA PARA O INSTAGRAM APARECE AQUI */}
-          {selectedEmbed && selectedEmbed.provider === 'instagram' && (
-            <a 
-              href={selected?.video} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-[10px] md:text-xs font-bold text-primary uppercase tracking-widest hover:brightness-125 transition-all mt-1 w-fit border-b border-primary/30 pb-0.5"
-            >
-              Abrir publicação no Instagram
-            </a>
-          )}
-
           {selectedEmbed && selectedEmbed.provider !== 'instagram' && (
             <p className="text-xs text-muted-foreground">Vídeo hospedado no {providerLabel[selectedEmbed.provider]}.</p>
           )}

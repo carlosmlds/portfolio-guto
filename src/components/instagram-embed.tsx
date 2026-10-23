@@ -33,6 +33,7 @@ export function InstagramEmbed({ embed, title }: { embed: VideoEmbed; title: str
     quote.setAttribute('data-instgrm-permalink', permalink);
     quote.setAttribute('data-instgrm-version', '14');
     quote.setAttribute('title', title);
+    quote.setAttribute('data-theme', 'dark');
     el.appendChild(quote);
 
     const process = () => window.instgrm?.Embeds?.process();
